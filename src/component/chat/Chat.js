@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Chat.css';
-import { Stomp } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 
 class Chat extends Component {
   state = {
@@ -25,37 +25,46 @@ class Chat extends Component {
   connectWS = () => {
     const { wsConnected } = this.state;
     if (wsConnected) return;
-    const url = 'ws://devserver.my:8080/wsdemo';
-    const stompClient = Stomp.client(url);
-    stompClient.connect(
-      {},
-      frame => {
-        stompClient.subscribe('/topic/chat', data => {
-          console.log(data);
-          const { messages } = this.state;
-          const message = JSON.parse(data.body);
-          console.log(message);
-          messages.push(message);
-          this.setState({
-            messages,
-          });
-        });
-        this.setState({
-          wsConnected: true,
-          stompClient,
-        });
+    const stompClient = new Client({
+      brokerURL: 'ws://devserver.my:8080/wsdemo',
+      connectHeaders: {
+        Authorization: `Bearer ${this.state.accessToken}`,
       },
-    );
+      debug: function(str) {
+        console.log(str);
+      },
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
+    stompClient.onConnect = frame => {
+      stompClient.subscribe('/topic/chat', data => {
+        const { messages } = this.state;
+        const message = JSON.parse(data.body);
+        messages.push(message);
+        this.setState({
+          messages,
+        });
+      });
+      this.setState({
+        wsConnected: true,
+        stompClient,
+      });
+    };
+    stompClient.onError = frame => {
+      console.log(`Broker reported error: ${frame.headers['message']}`);
+      console.log(`Additional details: ${frame.body}`);
+    };
+    stompClient.activate();
   };
 
   disconnectWS = () => {
     const { wsConnected, stompClient } = this.state;
     if (!wsConnected) return;
-    stompClient.disconnect(() => {
-      this.setState({
-        wsConnected: false,
-        stompClient: null,
-      });
+    stompClient.deactive();
+    this.setState({
+      wsConnected: false,
+      stompClient: null,
     });
   };
 
@@ -99,20 +108,16 @@ class Chat extends Component {
   sendMessage = () => {
     const { wsConnected, messageToSend, stompClient } = this.state;
     if (!wsConnected || messageToSend.length === 0) return;
-    stompClient.send(
-      '/app/message',
-      {},
-      JSON.stringify({ message: messageToSend }),
-    );
+    stompClient.publish({
+      destination: '/app/message',
+      body: JSON.stringify({ message: messageToSend }),
+    });
     this.setState({
       messageToSend: '',
     });
   };
 
-  componentDidMount() {
-    if (this.isLoggedIn() && !this.state.wsConnected) {
-      this.connectWS();
-    }
+  componentWillMount() {
     const storedToken = localStorage.getItem('accessToken');
     if (storedToken) {
       this.setState({
@@ -121,6 +126,16 @@ class Chat extends Component {
     }
   }
 
+  componentDidMount() {
+    if (this.isLoggedIn() && !this.state.wsConnected) {
+      this.connectWS();
+    }
+  }
+
+  componentWillUnmount() {
+    console.log('Disconnect WS and Exit.');
+    this.disconnectWS();
+  }
   render() {
     const { messages, wsConnected, messageToSend, email } = this.state;
     let i = 0;
