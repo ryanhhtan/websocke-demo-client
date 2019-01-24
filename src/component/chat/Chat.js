@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Chat.css';
 import { Client } from '@stomp/stompjs';
+// import SockJS from 'sockjs-client';
 
 class Chat extends Component {
   state = {
@@ -26,6 +27,8 @@ class Chat extends Component {
     const { wsConnected } = this.state;
     if (wsConnected) return;
     const stompClient = new Client({
+      // webSocketFactory: () => new WebSocket('ws://devserver.my:8080/wsdemo'),
+      // webSocketFactory: () => new SockJS('http://devserver.my:8080/wsdemo'),
       brokerURL: 'ws://devserver.my:8080/wsdemo',
       connectHeaders: {
         Authorization: `Bearer ${this.state.accessToken}`,
@@ -33,7 +36,7 @@ class Chat extends Component {
       debug: function(str) {
         console.log(str);
       },
-      reconnectDelay: 5000,
+      reconnectDelay: 0,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
     });
