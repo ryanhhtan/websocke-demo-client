@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import './Room.css';
+import './Dialog.css';
 
-class Room extends Component {
+class Dialog extends Component {
   render() {
     return (
       <div>
-        <h1>Room</h1>
+        <h1>Dialog</h1>
       </div>
     );
   }
 }
 
-export default Room;
+export default Dialog;
