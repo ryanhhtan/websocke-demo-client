@@ -19,7 +19,6 @@ class Chat extends Component {
 
   isLoggedIn = () => {
     const { accessToken } = this.state;
-    // console.log(accessToken);
     return accessToken && accessToken !== '';
   };
 
@@ -31,7 +30,8 @@ class Chat extends Component {
       // webSocketFactory: () => new SockJS('http://devserver.my:8080/wsdemo'),
       brokerURL: 'ws://devserver.my:8080/wsdemo',
       connectHeaders: {
-        Authorization: `Bearer ${this.state.accessToken}`,
+        displayName: 'John Doe',
+        accessToken: `${this.state.accessToken}`,
       },
       debug: function(str) {
         console.log(str);
