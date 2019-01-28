@@ -5,7 +5,7 @@ class Room extends Component {
   render() {
     return (
       <div>
-        <h1>Room</h1>
+        <h1>{this.props.room.name}</h1>
       </div>
     );
   }

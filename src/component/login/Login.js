@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { login, logout } from '../../actions/auth';
+import { disconnectWS } from '../../actions/stomp';
 import { connect } from 'react-redux';
 import LoadingSpinner from '../wigets/LoadingSpinner';
 import './Login.css';
@@ -22,8 +23,16 @@ class Login extends Component {
     return accessToken && accessToken.length > 0;
   };
 
+  logout = () => {
+    const { stompClient, disconnectWS, logout } = this.props;
+    if (stompClient !== null) {
+      disconnectWS(stompClient);
+    }
+    logout();
+  };
+
   render() {
-    const { isLoading, login, logout } = this.props;
+    const { isLoading, login } = this.props;
     const { email, password } = this.state;
     // console.log(`email: ${email}, password: ${password}`);
     return (
@@ -49,7 +58,7 @@ class Login extends Component {
         )}
         {this.isLoggedIn() && (
           <div>
-            <button onClick={() => logout()}>Logout</button>
+            <button onClick={this.logout}>Logout</button>
           </div>
         )}
       </div>
@@ -58,11 +67,13 @@ class Login extends Component {
 }
 
 const mapStateToProps = state => ({
+  stompClient: state.stompReducer.stompClient,
   isLoading: state.authReducer.isLoading,
   accessToken: state.authReducer.accessToken,
 });
 
 const mapDispatchToProps = dispatch => ({
+  disconnectWS: stompClient => disconnectWS(stompClient),
   login: (email, password) => dispatch(login(email, password)),
   logout: () => dispatch(logout()),
 });
