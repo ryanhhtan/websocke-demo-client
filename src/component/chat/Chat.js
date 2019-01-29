@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Login from '../login/Login';
-import RoomList from '../room/RoomList';
 import Entrance from '../entrance/Entrance';
-import Dialog from '../dialog/Dialog';
 import { connect } from 'react-redux';
+import ChatPane from './ChatPane';
 import './Chat.css';
 
 class Chat extends Component {
@@ -23,16 +22,7 @@ class Chat extends Component {
             <Login />
           </div>
         </div>
-        {this.isConnected() && (
-          <div className="chat-area">
-            <div className="room-pane">
-              <RoomList />
-            </div>
-            <div className="dialog-pane">
-              <Dialog />
-            </div>
-          </div>
-        )}
+        {this.isConnected() && <ChatPane />}
       </div>
     );
   }

@@ -1,8 +1,3 @@
-// import {
-//   ROOM_FETCHING,
-//   ROOM_FETCH_SUCCEEDED,
-//   ROOM_FETCH_FAILED,
-// } from '../actions/chat';
 const initState = {
   isLoading: false,
   rooms: [],
@@ -10,34 +5,36 @@ const initState = {
 };
 
 export const chatReducer = (state = initState, action) => {
-  const { updateState } = action;
+  const { updates } = action;
+  if (typeof updates === 'undefined') return state;
 
+  const newState = updates.reduce((accumulate, current) => {
+    switch (current.operation) {
+      case 'set':
+        console.log('set value to state');
+        return {
+          ...accumulate,
+          [current.target]: current.value,
+        };
+      case 'add':
+        return {
+          ...accumulate,
+          [current.target]: state[current.target].push(current.value),
+        };
+      case 'remove':
+        const index = state.indexOf(current.value);
+        return {
+          ...accumulate,
+          [current.target]: state[current.target].splice(index, 1),
+        };
+      default:
+        return accumulate;
+    }
+  }, {});
+
+  console.log(newState);
   return {
     ...state,
-    ...updateState,
+    ...newState,
   };
-  /*
-  const { type } = action;
-
-
-  if (type === ROOM_FETCHING) {
-    return {
-      ...state,
-      isLoading: true,
-    };
-  }
-
-  if (type === ROOM_FETCH_SUCCEEDED) {
-    return {
-      ...state,
-      isLoading: false,
-      rooms: action.rooms,
-    };
-  }
-
-  if (type === ROOM_FETCH_FAILED) {
-    return { ...state, isLoading: false };
-  }
-  return state;
-  */
 };

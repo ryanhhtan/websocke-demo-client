@@ -1,0 +1,20 @@
+import { roomFetchSucceeded } from '../actions/chat';
+
+class ChatService {
+  constructor() {
+    this.handlers = {
+      GET_ALL_ROOMS: this.handleRoomFetchSucceeded,
+    };
+  }
+
+  handleChatEvent = message => {
+    const event = JSON.parse(message.body);
+    return this.handlers[event.type](event);
+  };
+
+  handleRoomFetchSucceeded = event => roomFetchSucceeded(event.rooms);
+}
+
+const chatService = new ChatService();
+
+export default chatService;

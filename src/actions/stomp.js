@@ -1,5 +1,5 @@
 import { Client } from '@stomp/stompjs';
-import { chatService } from '../services/ChatService';
+// import { chatService } from '../services/ChatService';
 
 export const STOMP_CLIENT_CONNECTED = 'STOMP_CLIENT_CONNECTED';
 const stompClientConnectedAction = stompClient => ({
@@ -25,13 +25,17 @@ export const connectWS = (accessToken, displayName) => dispatch => {
     heartbeatOutgoing: 4000,
   });
   stompClient.onConnect = frame => {
-    stompClient.subscribe('/user/queue/events', chatService.handleChatEvent);
-    stompClient.subscribe('/topic/events', chatService.handleChatEvent);
     dispatch(stompClientConnectedAction(stompClient));
+    // stompClient.subscribe('/user/queue/events', message =>
+    //   dispatch(chatService.handleChatEvent(message)),
+    // );
+    // stompClient.subscribe('/topic/events', message =>
+    //   dispatch(chatService.handleChatEvent(message)),
+    // );
   };
   stompClient.onDisconnect = frame => {
     // console.log(frame);
-    stompClient.unsubscribe('/topic/events');
+    // stompClient.unsubscribe('/topic/events');
     dispatch(stompClientDisconnectedAction());
   };
   stompClient.onError = frame => {
@@ -49,5 +53,4 @@ const stompClientDisconnectedAction = () => ({
 
 export const disconnectWS = stompClient => {
   stompClient.deactivate();
-  // dispatch(stompClientDisconnectedAction());
 };

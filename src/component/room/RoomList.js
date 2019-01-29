@@ -14,24 +14,18 @@ class RoomList extends Component {
     });
   };
 
-  componentDidMount() {
-    const {stompClient} = this.props;
-    stompClient.publish({
-      destination: '/app/room.showall',
-    });
-  }
-
-  createRoom = (event) => {
-    const {stompClient} = this.props;
-    const {name} = this.state;
+  createRoom = event => {
+    const { stompClient } = this.props;
+    const { name } = this.state;
     stompClient.publish({
       destination: '/app/room.create',
-      body: JSON.stringify({name}),
+      body: JSON.stringify({ name }),
     });
-  }
+  };
 
   render() {
     const { rooms } = this.props;
+    console.log(rooms);
     return (
       <div className="room-list">
         <ul>
