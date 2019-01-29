@@ -2,28 +2,27 @@ import React, { Component } from 'react';
 import RoomList from '../room/RoomList';
 import Dialog from '../dialog/Dialog';
 import { connect } from 'react-redux';
-import { handleChatEvent } from '../../actions/chat';
+import { subscribe } from '../../actions/chat';
 
 import './ChatPane.css';
 
 class ChatPane extends Component {
   componentDidMount() {
-    const { stompClient, handleChatEvent } = this.props;
-    stompClient.subscribe('/user/queue/events', event =>
-      handleChatEvent(event),
-    );
-    stompClient.subscribe('/topic/events', event => handleChatEvent(event));
+    const { stompClient, subscribe, unsubscribe } = this.props;
+
+    subscribe('/user/queue/events');
+    subscribe('/topic/events');
 
     stompClient.publish({
       destination: '/app/room.showall',
     });
   }
 
-  componentWillUnmount() {
-    const { stompClient } = this.props;
-    stompClient.unsubscribe('/user/queue/events');
-    stompClient.unsubscribe('/topic/events');
-  }
+  // componentWillUnmount() {
+  //   const { stompClient } = this.props;
+  //   stompClient.unsubscribe('/user/queue/events');
+  //   stompClient.unsubscribe('/topic/events');
+  // }
 
   isConnected = () => {
     const { stompClient } = this.props;
@@ -51,7 +50,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  handleChatEvent: data => dispatch(handleChatEvent(data)),
+  subscribe: topic => dispatch(subscribe(topic)),
+  unsubscribe: topic => dispatch(unsubscribe(topic)),
 });
 
 export default connect(

@@ -49,6 +49,7 @@ export const connectWS = (accessToken, displayName) => dispatch => {
 export const STOMP_CLIENT_DISCONNECTED = 'STOMP_CLIENT_DISCONNECTED';
 const stompClientDisconnectedAction = () => ({
   type: STOMP_CLIENT_DISCONNECTED,
+  stompClient: null,
 });
 
 export const disconnectWS = stompClient => {

@@ -21,6 +21,9 @@ class RoomList extends Component {
       destination: '/app/room.create',
       body: JSON.stringify({ name }),
     });
+    this.setState({
+      name: '',
+    });
   };
 
   render() {
@@ -28,6 +31,7 @@ class RoomList extends Component {
     console.log(rooms);
     return (
       <div className="room-list">
+        <h2>Rooms</h2>
         <ul>
           {rooms.length > 0 &&
             rooms.map(room => (
@@ -43,7 +47,9 @@ class RoomList extends Component {
           onChange={this.editText}
           value={this.state.name}
         />
-        <button onClick={this.createRoom}>Create Room</button>
+        <button onClick={this.createRoom} disabled={this.state.name === ''}>
+          Create Room
+        </button>
       </div>
     );
   }
