@@ -3,21 +3,41 @@ import {
   ROOM_CREATED,
   TOPIC_SUBSCRIBED,
   TOPIC_UNSUBSCRIBED,
+  ENTERED_ROOM,
+  EXITED_ROOM,
 } from '../actions/chat';
 
 const initState = {
   rooms: [],
-  subscriptions: [],
+  topics: [],
   myRoomId: null,
 };
 
 export const chatReducer = (state = initState, action) => {
   switch (action.type) {
+    case TOPIC_SUBSCRIBED:
+      let topics = state.topics.slice();
+      topics.push(action.topic);
+      return {
+        ...state,
+        topics,
+      };
+
+    case TOPIC_UNSUBSCRIBED:
+      topics = state.topics.slice();
+      const index = topics.indexOf(action.topic);
+      if (index >= 0) topics.splice(index, 1);
+      return {
+        ...state,
+        topics,
+      };
+
     case ROOM_FETCH_SUCCEEDED:
       return {
         ...state,
         rooms: action.rooms,
       };
+
     case ROOM_CREATED:
       const rooms = state.rooms.slice();
       rooms.push(action.room);
@@ -25,23 +45,16 @@ export const chatReducer = (state = initState, action) => {
         ...state,
         rooms,
       };
-    case TOPIC_SUBSCRIBED:
-      let subscriptions = state.subscriptions.slice();
-      subscriptions.push(action.topic);
+    case ENTERED_ROOM:
       return {
         ...state,
-        subscriptions,
+        myRoomId: action.room.id,
       };
-    case TOPIC_UNSUBSCRIBED:
-      subscriptions = state.subscriptions.slice();
-      const index = subscriptions.indexOf(action.topic);
-      subscriptions.splice(index, 1);
-
+    case EXITED_ROOM:
       return {
         ...state,
-        subscriptions,
+        myRoomId: null,
       };
-
     default:
       return state;
   }

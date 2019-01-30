@@ -6,11 +6,8 @@ import ChatPane from './ChatPane';
 import './Chat.css';
 
 class Chat extends Component {
-  isConnected = () => {
-    const { stompClient } = this.props;
-    return stompClient !== null;
-  };
   render() {
+    const { isConnected } = this.props;
     return (
       <div className="chat">
         <h1>Websocket Chat Demo</h1>
@@ -22,7 +19,7 @@ class Chat extends Component {
             <Login />
           </div>
         </div>
-        {this.isConnected() && <ChatPane />}
+        {isConnected && <ChatPane />}
       </div>
     );
   }
@@ -30,6 +27,7 @@ class Chat extends Component {
 
 const mapStateToProps = state => ({
   stompClient: state.stompReducer.stompClient,
+  isConnected: state.stompReducer.isConnected,
 });
 
 export default connect(mapStateToProps)(Chat);

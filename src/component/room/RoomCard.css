@@ -1,0 +1,19 @@
+.room-card {
+  width: 400px;
+  height: 150px;
+  background: #efefcc;
+  margin: 5px;
+}
+
+.caption {
+  text-transform: uppercase;
+  font-size: 1em;
+}
+
+.right {
+  float: right;
+}
+
+.hovering {
+  background: #99ff99;
+}

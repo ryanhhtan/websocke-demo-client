@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import RoomList from '../room/RoomList';
-import Dialog from '../dialog/Dialog';
+import Room from '../room/Room';
 import { connect } from 'react-redux';
-import { subscribe } from '../../actions/chat';
+import { subscribeTopic } from '../../actions/chat';
 
 import './ChatPane.css';
 
 class ChatPane extends Component {
   componentDidMount() {
-    const { stompClient, subscribe, unsubscribe } = this.props;
-
+    const { stompClient, subscribe } = this.props;
     subscribe('/user/queue/events');
     subscribe('/topic/events');
 
@@ -18,40 +17,33 @@ class ChatPane extends Component {
     });
   }
 
-  // componentWillUnmount() {
-  //   const { stompClient } = this.props;
-  //   stompClient.unsubscribe('/user/queue/events');
-  //   stompClient.unsubscribe('/topic/events');
-  // }
-
-  isConnected = () => {
-    const { stompClient } = this.props;
-    return stompClient !== null;
-  };
-
   render() {
+    const { myRoomId } = this.props;
     return (
       <div className="chat-area">
-        {this.isConnected() && (
+        {myRoomId === null ? (
           <div className="room-pane">
             <RoomList />
           </div>
+        ) : (
+          <div className="dialog-pane">
+            <Room />
+          </div>
         )}
-        <div className="dialog-pane">
-          <Dialog />
-        </div>
       </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
+  myRoomId: state.chatReducer.myRoomId,
   stompClient: state.stompReducer.stompClient,
+  isConnected: state.stompReducer.isConnected,
 });
 
 const mapDispatchToProps = dispatch => ({
-  subscribe: topic => dispatch(subscribe(topic)),
-  unsubscribe: topic => dispatch(unsubscribe(topic)),
+  subscribe: topic => dispatch(subscribeTopic(topic)),
+  // unsubscribe: topic => dispatch(unsubscribeTopic(topic)),
 });
 
 export default connect(

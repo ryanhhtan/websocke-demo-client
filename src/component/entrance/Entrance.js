@@ -25,8 +25,7 @@ class Entrance extends Component {
 
   disconnectWS = event => {
     console.log('CLICK');
-    const { stompClient, disconnectWS } = this.props;
-    disconnectWS(stompClient);
+    this.props.disconnectWS();
   };
 
   render() {
@@ -65,7 +64,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   connectWS: (accessToken, displayName) =>
     dispatch(connectWS(accessToken, displayName)),
-  disconnectWS: stompClient => disconnectWS(stompClient),
+  disconnectWS: () => dispatch(disconnectWS()),
 });
 
 export default connect(

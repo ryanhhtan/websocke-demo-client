@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './RoomList.css';
 import { connect } from 'react-redux';
-import Room from './Room';
+import RoomCard from './RoomCard';
 
 class RoomList extends Component {
   state = {
@@ -30,26 +30,25 @@ class RoomList extends Component {
     const { rooms } = this.props;
     console.log(rooms);
     return (
-      <div className="room-list">
+      <div>
         <h2>Rooms</h2>
-        <ul>
+        <div>
+          <div>Create a room</div>
+          <input
+            type="text"
+            name="name"
+            onChange={this.editText}
+            value={this.state.name}
+          />
+          <button onClick={this.createRoom} disabled={this.state.name === ''}>
+            Create
+          </button>
+        </div>
+        {rooms.length === 0 && <p>No body is chatting now.</p>}
+        <div className="room-list">
           {rooms.length > 0 &&
-            rooms.map(room => (
-              <li key={room.id}>
-                {' '}
-                <Room room={room} />
-              </li>
-            ))}
-        </ul>
-        <input
-          type="text"
-          name="name"
-          onChange={this.editText}
-          value={this.state.name}
-        />
-        <button onClick={this.createRoom} disabled={this.state.name === ''}>
-          Create Room
-        </button>
+            rooms.map(room => <RoomCard key={room.id} room={room} />)}
+        </div>
       </div>
     );
   }

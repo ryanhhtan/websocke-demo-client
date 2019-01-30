@@ -4,6 +4,7 @@ import {
 } from '../actions/stomp';
 const initState = {
   stompClient: null,
+  isConnected: false,
 };
 
 export const stompReducer = (state = initState, action) => {
@@ -12,11 +13,13 @@ export const stompReducer = (state = initState, action) => {
       return {
         ...state,
         stompClient: action.stompClient,
+        isConnected: true,
       };
     case STOMP_CLIENT_DISCONNECTED:
       return {
         ...state,
         stompClient: null,
+        isConnected: false,
       };
     default:
       return state;

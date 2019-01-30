@@ -7,9 +7,9 @@ const stompClientConnectedAction = stompClient => ({
   stompClient,
 });
 export const STOMP_CLIENT_CONNECT_FAILED = 'STOMP_CLIENT_CONNECT_FAILED';
-const stompClientConnectFailedAction = () => ({
+const stompClientConnectFailedAction = {
   type: STOMP_CLIENT_CONNECT_FAILED,
-});
+};
 export const connectWS = (accessToken, displayName) => dispatch => {
   const stompClient = new Client({
     brokerURL: 'ws://devserver.my:8080/wsdemo',
@@ -26,32 +26,28 @@ export const connectWS = (accessToken, displayName) => dispatch => {
   });
   stompClient.onConnect = frame => {
     dispatch(stompClientConnectedAction(stompClient));
-    // stompClient.subscribe('/user/queue/events', message =>
-    //   dispatch(chatService.handleChatEvent(message)),
-    // );
-    // stompClient.subscribe('/topic/events', message =>
-    //   dispatch(chatService.handleChatEvent(message)),
-    // );
   };
   stompClient.onDisconnect = frame => {
-    // console.log(frame);
-    // stompClient.unsubscribe('/topic/events');
-    dispatch(stompClientDisconnectedAction());
+    dispatch(stompClientDisconnectedAction);
   };
   stompClient.onError = frame => {
     console.log(`Broker reported error: ${frame.headers['message']}`);
     console.log(`Additional details: ${frame.body}`);
-    dispatch(stompClientConnectFailedAction());
+    dispatch(stompClientConnectFailedAction);
   };
   stompClient.activate();
 };
 
 export const STOMP_CLIENT_DISCONNECTED = 'STOMP_CLIENT_DISCONNECTED';
-const stompClientDisconnectedAction = () => ({
+export const stompClientDisconnectedAction = {
   type: STOMP_CLIENT_DISCONNECTED,
   stompClient: null,
-});
-
-export const disconnectWS = stompClient => {
-  stompClient.deactivate();
+};
+export const STOMP_CLIENT_TO_BE_DISCONNECTED =
+  'STOMP_CLIENT_TO_BE_DISCONNECTED';
+const stompClientToBeDisconnectAction = {
+  type: STOMP_CLIENT_TO_BE_DISCONNECTED,
+};
+export const disconnectWS = () => dispatch => {
+  dispatch(stompClientToBeDisconnectAction);
 };
