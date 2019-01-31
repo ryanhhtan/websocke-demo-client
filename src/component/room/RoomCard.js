@@ -31,7 +31,7 @@ class RoomCard extends Component {
         <h3>{room.name}</h3>
         <div>
           <span className="caption">Current: </span>
-          <span>{room.users.length} attendees.</span>
+          <span>{room.totalAttendees} attendees.</span>
         </div>
         <button
           className={this.state.isSelected ? 'hovering' : ''}

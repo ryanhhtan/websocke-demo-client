@@ -8,20 +8,17 @@ import './ChatPane.css';
 
 class ChatPane extends Component {
   componentDidMount() {
-    const { stompClient, subscribe } = this.props;
+    const { subscribe } = this.props;
     subscribe('/user/queue/events');
     subscribe('/topic/events');
-
-    stompClient.publish({
-      destination: '/app/room.showall',
-    });
+    subscribe('/app/room.showall');
   }
 
   render() {
-    const { myRoomId } = this.props;
+    const { currentRoom } = this.props;
     return (
       <div className="chat-area">
-        {myRoomId === null ? (
+        {currentRoom === null ? (
           <div className="room-pane">
             <RoomList />
           </div>
@@ -36,8 +33,8 @@ class ChatPane extends Component {
 }
 
 const mapStateToProps = state => ({
-  myRoomId: state.chatReducer.myRoomId,
-  stompClient: state.stompReducer.stompClient,
+  currentRoom: state.chatReducer.currentRoom,
+  // stompClient: state.stompReducer.stompClient,
   isConnected: state.stompReducer.isConnected,
 });
 
