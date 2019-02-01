@@ -4,7 +4,6 @@ import {
   ROOM_CREATED,
   TOPIC_SUBSCRIBED,
   TOPIC_UNSUBSCRIBED,
-  ENTERED_ROOM,
   USER_ENTERED,
   EXITED_ROOM,
   USER_EXITED,
@@ -61,23 +60,23 @@ export const chatReducer = (state = initState, action) => {
     };
   }
 
-  if (type === ENTERED_ROOM) {
-    return {
-      ...state,
-      myRoomId: action.room.id,
-    };
-  }
+  // if (type === ENTERED_ROOM) {
+  //   return {
+  //     ...state,
+  //     myRoomId: action.room.id,
+  //   };
+  // }
 
   if (type === EXITED_ROOM) {
     return {
       ...state,
-      myRoomId: null,
+      currentRoom: null,
     };
   }
 
   if (type === USER_ENTERED) {
     const currentRoom = Object.assign({}, state.currentRoom);
-    currentRoom.users.push(action.user);
+    currentRoom.attendees.push(action.user);
     return {
       ...state,
       currentRoom,

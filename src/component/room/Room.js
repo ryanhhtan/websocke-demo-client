@@ -17,14 +17,17 @@ class Room extends Component {
 
   render() {
     const { room } = this.props;
-    const users = room.users;
+    const attendees = room.attendees;
     return (
       <div className="room">
         <h1>Room: {room.name}</h1>
         <button onClick={this.exitRoom}>Exit</button>
         <div>
           <div className="user-pane">
-            {users.length > 0 && users.map(user => <User user={user} />)}
+            {attendees.length > 0 &&
+              attendees.map(attendee => (
+                <User user={attendee.user} key={attendee.sessionId} />
+              ))}
           </div>
           <div className="message-pane">
             <h1>MESSAGE PANE</h1>
@@ -36,7 +39,7 @@ class Room extends Component {
 }
 
 const mapStateToProps = state => ({
-  currentRoom: state.chatReducer.curretRoom,
+  room: state.chatReducer.currentRoom,
   stompClient: state.stompReducer.stompClient,
 });
 

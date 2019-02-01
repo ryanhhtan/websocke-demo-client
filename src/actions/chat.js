@@ -3,51 +3,7 @@ import {
   TOPIC_UNSUBSCRIBE,
 } from '../middleware/SubscriptionService';
 
-export const ALL_ROOMS_FETCHED = 'ALL_ROOMS_FETCHED';
-const allRoomsFetchedAction = rooms => ({
-  type: ALL_ROOMS_FETCHED,
-  rooms,
-});
-const handleAllRoomsFetched = event => allRoomsFetchedAction(event.rooms);
-
-export const ROOM_DETAILS_FETCHED = 'ROOM_DETAILS_FETCHED';
-const roomDetailsFetched = room => ({
-  type: ROOM_DETAILS_FETCHED,
-  room,
-});
-const handleRoomDetailsFetched = event => roomDetailsFetched(event.room);
-
-export const ROOM_CREATED = 'ROOM_CREATED';
-const roomCreatedAction = room => ({
-  type: ROOM_CREATED,
-  room,
-});
-const handleRoomCreated = event => roomCreatedAction(event.room);
-
-export const USER_ENTERED = 'USER_ENTERED';
-const userEnteredAction = user => ({
-  type: USER_ENTERED,
-  user,
-});
-const handleUserEntered = event => userEnteredAction(event.roomId, event.user);
-
-export const USER_EXITED = 'USER_EXITED';
-const userExitRoomAction = user => ({
-  type: USER_EXITED,
-  user,
-});
-const handleUserExited = event => userExitRoomAction(event.roomId, event.user);
-
-export const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
-const chatMessageReceivedAction = message => ({
-  type: CHAT_MESSAGE_RECEIVED,
-  message,
-});
-export const handleChatMessage = (dispatch, data) => {
-  const message = JSON.parse(data.body);
-  console.log(message);
-  dispatch(chatMessageReceivedAction(message));
-};
+import { disconnectWS } from '../actions/stomp';
 
 const topicSubscribeAction = (topic, handler) => ({
   type: TOPIC_SUBSCRIBE,
@@ -81,18 +37,16 @@ const enteringRoomAction = {
   type: ENTERING_ROOM,
 };
 export const ENTERED_ROOM = 'ENTERED_ROOM';
-const enteredrRoomAction = room => ({
+const enteredRoomAction = {
   type: ENTERED_ROOM,
-  room,
-});
+};
 
 export const enterRoom = room => dispatch => {
   // console.log(room);
   dispatch(enteringRoomAction);
   dispatch(subscribeTopic(`/topic/room.${room.id}`, handleChatEvent));
   dispatch(subscribeTopic(`/app/room.${room.id}.details`, handleChatEvent));
-  dispatch(subscribeTopic(`/app/room.${room.id}.enter`, handleChatEvent));
-  dispatch(enteredrRoomAction(room));
+  dispatch(enteredRoomAction);
 };
 
 export const EXITING_ROOM = 'EXITING_ROOM';
@@ -112,9 +66,65 @@ export const exitRoom = room => dispatch => {
   dispatch(exitedRoomAction(room));
 };
 
+/* handlers for stomp messages */
+export const ALL_ROOMS_FETCHED = 'ALL_ROOMS_FETCHED';
+const allRoomsFetchedAction = rooms => ({
+  type: ALL_ROOMS_FETCHED,
+  rooms,
+});
+const handleAllRoomsFetched = event => allRoomsFetchedAction(event.rooms);
+
+export const ROOM_DETAILS_FETCHED = 'ROOM_DETAILS_FETCHED';
+const roomDetailsFetched = room => ({
+  type: ROOM_DETAILS_FETCHED,
+  room,
+});
+const handleRoomDetailsFetched = event => dispatch => {
+  dispatch(roomDetailsFetched(event.room));
+  dispatch(subscribeTopic(`/app/room.${event.room.id}.enter`, handleChatEvent));
+};
+
+export const ROOM_CREATED = 'ROOM_CREATED';
+const roomCreatedAction = room => ({
+  type: ROOM_CREATED,
+  room,
+});
+const handleRoomCreated = event => roomCreatedAction(event.room);
+
+export const USER_ENTERED = 'USER_ENTERED';
+const userEnteredAction = user => ({
+  type: USER_ENTERED,
+  user,
+});
+const handleUserEntered = event => userEnteredAction(event.user);
+
+export const USER_EXITED = 'USER_EXITED';
+const userExitRoomAction = user => ({
+  type: USER_EXITED,
+  user,
+});
+const handleUserExited = event => userExitRoomAction(event.roomId, event.user);
+
+export const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
+const chatMessageReceivedAction = message => ({
+  type: CHAT_MESSAGE_RECEIVED,
+  message,
+});
+export const handleChatMessage = (dispatch, data) => {
+  const message = JSON.parse(data.body);
+  console.log(message);
+  dispatch(chatMessageReceivedAction(message));
+};
+
+export const USER_CONNECTED = 'USER_CONNECTED';
+const handleUserConnected = event => dispatch => {
+  dispatch(disconnectWS());
+  // console.log(event);
+};
+
 /**
  * map event handler to type.
- * !!! BESURE THE ACTUAL HANDLER IS DEFINED BEFORE THIS MAP.
+ * !!! BESURE THE ACTUAL HANDLERS ARE DEFINED BEFORE THIS MAP.
  */
 const chatEventHandler = {
   ALL_ROOMS_FETCHED: handleAllRoomsFetched,
@@ -122,6 +132,7 @@ const chatEventHandler = {
   ROOM_DETAILS_FETCHED: handleRoomDetailsFetched,
   USER_ENTERED: handleUserEntered,
   USER_EXITED: handleUserExited,
+  USER_CONNECTED: handleUserConnected,
 };
 
 export const handleChatEvent = (dispatch, data) => {
