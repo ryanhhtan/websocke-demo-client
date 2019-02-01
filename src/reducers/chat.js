@@ -76,7 +76,7 @@ export const chatReducer = (state = initState, action) => {
 
   if (type === USER_ENTERED) {
     const currentRoom = Object.assign({}, state.currentRoom);
-    currentRoom.attendees.push(action.user);
+    currentRoom.attendees.push(action.attendee);
     return {
       ...state,
       currentRoom,
@@ -84,10 +84,11 @@ export const chatReducer = (state = initState, action) => {
   }
 
   if (type === USER_EXITED) {
+    if (state.currentRoom == null) return state;
     const currentRoom = Object.assign({}, state.currentRoom);
-    const users = currentRoom.users;
-    const index = users.indexOf(action.user);
-    currentRoom.users = users.splice(index, 1);
+    const attendees = currentRoom.attendees;
+    const index = attendees.indexOf(action.attendee);
+    currentRoom.attendees = attendees.splice(index, 1);
     return {
       ...state,
       currentRoom,

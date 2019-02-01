@@ -62,6 +62,7 @@ const exitedRoomAction = room => ({
 
 export const exitRoom = room => dispatch => {
   dispatch(exitingRoomAction);
+  dispatch(subscribeTopic(`/app/room.${room.id}.exit`));
   dispatch(unsubscribeTopic(`/topic/room.${room.id}`));
   dispatch(exitedRoomAction(room));
 };
@@ -92,18 +93,19 @@ const roomCreatedAction = room => ({
 const handleRoomCreated = event => roomCreatedAction(event.room);
 
 export const USER_ENTERED = 'USER_ENTERED';
-const userEnteredAction = user => ({
+const userEnteredAction = attendee => ({
   type: USER_ENTERED,
-  user,
+  attendee,
 });
-const handleUserEntered = event => userEnteredAction(event.user);
+const handleUserEntered = event => userEnteredAction(event.attendee);
 
 export const USER_EXITED = 'USER_EXITED';
-const userExitRoomAction = user => ({
+const userExitRoomAction = attendee => ({
   type: USER_EXITED,
-  user,
+  attendee,
 });
-const handleUserExited = event => userExitRoomAction(event.roomId, event.user);
+const handleUserExited = event =>
+  userExitRoomAction(event.roomId, event.attendee);
 
 export const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
 const chatMessageReceivedAction = message => ({
