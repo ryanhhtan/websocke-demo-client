@@ -19,17 +19,13 @@ class Entrance extends Component {
     });
   };
 
-  isConnected = () => {
-    return this.props.stompClient !== null;
-  };
-
   disconnectWS = event => {
     console.log('CLICK');
     this.props.disconnectWS();
   };
 
   render() {
-    const { connectWS, accessToken } = this.props;
+    const { connectWS, accessToken, isConnected } = this.props;
     const { displayName } = this.state;
     return (
       <div className="entrance">
@@ -38,25 +34,24 @@ class Entrance extends Component {
           name="displayName"
           value={this.state.displayName}
           onChange={this.editText}
-          disabled={!this.isLoggedIn() || this.isConnected()}
+          disabled={!this.isLoggedIn() || isConnected}
           placeholder="Nick name"
         />
-        {!this.isConnected() && (
+        {!isConnected && (
           <button
             disabled={!this.isLoggedIn() || this.state.displayName === ''}
             onClick={() => connectWS(accessToken, displayName)}>
             Start Chatting
           </button>
         )}
-        {this.isConnected() && (
-          <button onClick={this.disconnectWS}>Leave</button>
-        )}
+        {isConnected && <button onClick={this.disconnectWS}>Leave</button>}
       </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
+  isConnected: state.stompReducer.isConnected,
   accessToken: state.authReducer.accessToken,
   stompClient: state.stompReducer.stompClient,
 });

@@ -25,6 +25,7 @@ export const connectWS = (accessToken, displayName) => dispatch => {
     heartbeatOutgoing: 4000,
   });
   stompClient.onConnect = frame => {
+    console.log(frame);
     dispatch(stompClientConnectedAction(stompClient));
   };
   stompClient.onDisconnect = frame => {
@@ -43,11 +44,17 @@ export const stompClientDisconnectedAction = {
   type: STOMP_CLIENT_DISCONNECTED,
   stompClient: null,
 };
-export const STOMP_CLIENT_TO_BE_DISCONNECTED =
-  'STOMP_CLIENT_TO_BE_DISCONNECTED';
-const stompClientToBeDisconnectAction = {
-  type: STOMP_CLIENT_TO_BE_DISCONNECTED,
+
+export const STOMP_CLIENT_WILL_DISCONNECT = 'STOMP_CLIENT_WILL_DISCONNECT';
+const stompClientWillDisconnectAction = {
+  type: STOMP_CLIENT_WILL_DISCONNECT,
+};
+
+export const STOMP_CLIENT_TO_DISCONNECT = 'STOMP_CLIENT_TO_DISCONNECT';
+const stompClientToDisconnectAction = {
+  type: STOMP_CLIENT_TO_DISCONNECT,
 };
 export const disconnectWS = () => dispatch => {
-  dispatch(stompClientToBeDisconnectAction);
+  dispatch(stompClientWillDisconnectAction);
+  dispatch(stompClientToDisconnectAction);
 };

@@ -58,5 +58,4 @@ const mapStateToProps = state => ({
   rooms: state.chatReducer.rooms,
   stompClient: state.stompReducer.stompClient,
 });
-
 export default connect(mapStateToProps)(RoomList);

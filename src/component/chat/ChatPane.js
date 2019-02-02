@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import RoomList from '../room/RoomList';
 import Room from '../room/Room';
 import { connect } from 'react-redux';
-import { subscribeTopic } from '../../actions/chat';
+import { subscribeTopic, publish } from '../../actions/chat';
 
 import './ChatPane.css';
 
 class ChatPane extends Component {
   componentDidMount() {
-    const { subscribe } = this.props;
+    const { subscribe, publish } = this.props;
     subscribe('/user/queue/events');
     subscribe('/topic/events');
-    subscribe('/app/room.showall');
+    publish('/app/room.showall');
   }
 
   render() {
@@ -40,6 +40,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   subscribe: topic => dispatch(subscribeTopic(topic)),
+  publish: (destination, content) => dispatch(publish(destination, content)),
   // unsubscribe: topic => dispatch(unsubscribeTopic(topic)),
 });
 

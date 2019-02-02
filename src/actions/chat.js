@@ -1,12 +1,13 @@
 import {
-  TOPIC_SUBSCRIBE,
-  TOPIC_UNSUBSCRIBE,
+  TO_SUBSCRIBE_TOPIC,
+  TO_UNSUBSCRIBE_TOPIC,
+  TO_PUBLISH,
 } from '../middleware/SubscriptionService';
 
 import { disconnectWS } from '../actions/stomp';
 
 const topicSubscribeAction = (topic, handler) => ({
-  type: TOPIC_SUBSCRIBE,
+  type: TO_SUBSCRIBE_TOPIC,
   topic,
   handler,
 });
@@ -14,11 +15,20 @@ export const subscribeTopic = (topic, handler = handleChatEvent) => dispatch =>
   dispatch(topicSubscribeAction(topic, handler));
 
 const topicUnsubscribAction = topic => ({
-  type: TOPIC_UNSUBSCRIBE,
+  type: TO_UNSUBSCRIBE_TOPIC,
   topic,
 });
 export const unsubscribeTopic = topic => dispatch =>
   dispatch(topicUnsubscribAction(topic));
+
+const toPublishAction = (destination, content = {}) => ({
+  type: TO_PUBLISH,
+  data: {
+    destination,
+    body: JSON.stringify(content),
+  },
+});
+export const publish = data => dispatch => dispatch(toPublishAction(data));
 
 export const TOPIC_SUBSCRIBED = 'TOPIC_SUBSCRIBED';
 export const topicSubscribedAction = topic => ({
@@ -36,17 +46,16 @@ export const ENTERING_ROOM = 'ENTERING_ROOM';
 const enteringRoomAction = {
   type: ENTERING_ROOM,
 };
-export const ENTERED_ROOM = 'ENTERED_ROOM';
-const enteredRoomAction = {
-  type: ENTERED_ROOM,
-};
+// export const ENTERED_ROOM = 'ENTERED_ROOM';
+// const enteredRoomAction = {
+//   type: ENTERED_ROOM,
+// };
 
 export const enterRoom = room => dispatch => {
   // console.log(room);
   dispatch(enteringRoomAction);
   dispatch(subscribeTopic(`/topic/room.${room.id}`, handleChatEvent));
-  dispatch(subscribeTopic(`/app/room.${room.id}.details`, handleChatEvent));
-  dispatch(enteredRoomAction);
+  dispatch(publish(`/app/room.${room.id}.details`, {}));
 };
 
 export const EXITING_ROOM = 'EXITING_ROOM';
@@ -62,11 +71,14 @@ const exitedRoomAction = room => ({
 
 export const exitRoom = room => dispatch => {
   dispatch(exitingRoomAction);
-  dispatch(subscribeTopic(`/app/room.${room.id}.exit`));
+  dispatch(publish(`/app/room.${room.id}.exit`, {}));
   dispatch(unsubscribeTopic(`/topic/room.${room.id}`));
   dispatch(exitedRoomAction(room));
+  // refresh all rooms
+  dispatch(publish('/app/room.showall'));
 };
 
+/*************************************************************************/
 /* handlers for stomp messages */
 export const ALL_ROOMS_FETCHED = 'ALL_ROOMS_FETCHED';
 const allRoomsFetchedAction = rooms => ({
@@ -82,7 +94,7 @@ const roomDetailsFetched = room => ({
 });
 const handleRoomDetailsFetched = event => dispatch => {
   dispatch(roomDetailsFetched(event.room));
-  dispatch(subscribeTopic(`/app/room.${event.room.id}.enter`, handleChatEvent));
+  dispatch(publish(`/app/room.${event.room.id}.enter`, {}));
 };
 
 export const ROOM_CREATED = 'ROOM_CREATED';

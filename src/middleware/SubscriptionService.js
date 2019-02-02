@@ -5,12 +5,13 @@ import {
 } from '../actions/chat.js';
 
 import {
-  STOMP_CLIENT_TO_BE_DISCONNECTED,
+  STOMP_CLIENT_TO_DISCONNECT,
   stompClientDisconnectedAction,
 } from '../actions/stomp.js';
 
-export const TOPIC_SUBSCRIBE = 'TOPIC_SUBSCRIBE';
-export const TOPIC_UNSUBSCRIBE = 'TOPIC_UNSUBSCRIBE';
+export const TO_SUBSCRIBE_TOPIC = 'TO_SUBSCRIBE_TOPIC';
+export const TO_UNSUBSCRIBE_TOPIC = 'TO_UNSUBSCRIBE_TOPIC';
+export const TO_PUBLISH = 'TO_PUBLISH';
 
 export const subscriptionService = ({
   getState,
@@ -19,7 +20,36 @@ export const subscriptionService = ({
   console.log('subscription middleware trigered.');
   // console.log(getState());
   const { stompClient } = getState().stompReducer;
+  const { type } = action;
+
+  if (type === TO_SUBSCRIBE_TOPIC) {
+    const { topic, handler } = action;
+    stompClient.subscribe(topic, data => handler(dispatch, data));
+    dispatch(topicSubscribedAction(action.topic));
+  }
+
+  if (type === TO_UNSUBSCRIBE_TOPIC) {
+    stompClient.unsubscribe(action.topic);
+    dispatch(topicUnsubscribedAction(action.topic));
+  }
+
+  if (type === TO_PUBLISH) {
+    stompClient.publish(action.data);
+  }
+
+  if (type === STOMP_CLIENT_TO_DISCONNECT) {
+    const { topics } = getState().chatReducer;
+    topics.forEach(topic => stompClient.unsubscribe(topic));
+    stompClient.deactivate();
+    dispatch(stompClientDisconnectedAction);
+  }
+
+  next(action);
+
+  /*
+
   switch (action.type) {
+
     case TOPIC_SUBSCRIBE:
       const { topic, handler } = action;
       stompClient.subscribe(topic, data => handler(dispatch, data));
@@ -29,15 +59,15 @@ export const subscriptionService = ({
       stompClient.unsubscribe(action.topic);
       dispatch(topicUnsubscribedAction(action.topic));
       break;
-    case STOMP_CLIENT_TO_BE_DISCONNECTED:
+    case STOMP_CLIENT_TO_DISCONNECT:
       const { topics } = getState().chatReducer;
       topics.forEach(topic => stompClient.unsubscribe(topic));
       stompClient.deactivate();
       dispatch(stompClientDisconnectedAction);
       break;
-
     default:
       break;
   }
   next(action);
+  */
 };
