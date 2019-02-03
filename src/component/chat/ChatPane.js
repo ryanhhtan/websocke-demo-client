@@ -9,8 +9,8 @@ import './ChatPane.css';
 class ChatPane extends Component {
   componentDidMount() {
     const { subscribe, publish } = this.props;
-    subscribe('/user/queue/events');
-    subscribe('/topic/events');
+    subscribe({ uri: '/user/queue/events' });
+    subscribe({ uri: '/topic/events' });
     publish('/app/room.showall');
   }
 

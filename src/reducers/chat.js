@@ -23,7 +23,7 @@ export const chatReducer = (state = initState, action) => {
   if (type === STOMP_CLIENT_WILL_DISCONNECT) return initState;
 
   if (type === TOPIC_SUBSCRIBED) {
-    if (action.topic.startsWith('/app')) return state;
+    if (action.topic.uri.startsWith('/app')) return state;
     const topics = state.topics.slice();
     topics.push(action.topic);
     return {
@@ -33,7 +33,7 @@ export const chatReducer = (state = initState, action) => {
   }
 
   if (type === TOPIC_UNSUBSCRIBED) {
-    if (action.topic.startsWith('/app')) return state;
+    if (action.topic.uri.startsWith('/app')) return state;
     const topics = state.topics.slice();
     const index = topics.indexOf(action.topic);
     if (index >= 0) topics.splice(index, 1);

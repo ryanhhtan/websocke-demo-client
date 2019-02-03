@@ -6,20 +6,20 @@ import {
 
 import { disconnectWS } from '../actions/stomp';
 
-const topicSubscribeAction = (topic, handler) => ({
+const subscribeTopicAction = (topic, handler) => ({
   type: TO_SUBSCRIBE_TOPIC,
   topic,
   handler,
 });
 export const subscribeTopic = (topic, handler = handleChatEvent) => dispatch =>
-  dispatch(topicSubscribeAction(topic, handler));
+  dispatch(subscribeTopicAction(topic, handler));
 
-const topicUnsubscribAction = topic => ({
+const unsubscribeTopicAction = topicUri => ({
   type: TO_UNSUBSCRIBE_TOPIC,
-  topic,
+  topicUri,
 });
-export const unsubscribeTopic = topic => dispatch =>
-  dispatch(topicUnsubscribAction(topic));
+export const unsubscribeTopic = topicUri => dispatch =>
+  dispatch(unsubscribeTopicAction(topicUri));
 
 const toPublishAction = (destination, content = {}) => ({
   type: TO_PUBLISH,
@@ -54,7 +54,7 @@ const enteringRoomAction = {
 export const enterRoom = room => dispatch => {
   // console.log(room);
   dispatch(enteringRoomAction);
-  dispatch(subscribeTopic(`/topic/room.${room.id}`, handleChatEvent));
+  dispatch(subscribeTopic({ uri: `/topic/room.${room.id}` }, handleChatEvent));
   dispatch(publish(`/app/room.${room.id}.details`, {}));
 };
 
@@ -150,8 +150,7 @@ const chatEventHandler = {
 };
 
 export const handleChatEvent = (dispatch, data) => {
-  // console.log(data);
+  console.log(data.body);
   const event = JSON.parse(data.body);
-  console.log(event);
   dispatch(chatEventHandler[event.type](event));
 };

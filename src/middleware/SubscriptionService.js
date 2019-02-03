@@ -20,17 +20,27 @@ export const subscriptionService = ({
   console.log('subscription middleware trigered.');
   // console.log(getState());
   const { stompClient } = getState().stompReducer;
+  const { topics } = getState().chatReducer;
   const { type } = action;
 
   if (type === TO_SUBSCRIBE_TOPIC) {
     const { topic, handler } = action;
-    stompClient.subscribe(topic, data => handler(dispatch, data));
-    dispatch(topicSubscribedAction(action.topic));
+    topic.subscription = stompClient.subscribe(topic.uri, data =>
+      handler(dispatch, data),
+    );
+
+    // console.log(result);
+    dispatch(topicSubscribedAction(topic));
   }
 
   if (type === TO_UNSUBSCRIBE_TOPIC) {
-    stompClient.unsubscribe(action.topic);
-    dispatch(topicUnsubscribedAction(action.topic));
+    if (topics.length === 0) next(action);
+    const { topicUri } = action;
+    const topic = topics.filter(topic => topic.uri === topicUri)[0];
+    console.log('To unsubscribe topic: ');
+    console.log(topic);
+    topic.subscription.unsubscribe();
+    dispatch(topicUnsubscribedAction(topic));
   }
 
   if (type === TO_PUBLISH) {
