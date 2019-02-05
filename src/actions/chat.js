@@ -78,6 +78,26 @@ export const exitRoom = room => dispatch => {
   dispatch(publish('/app/room.showall'));
 };
 
+export const SELECTED_USER = 'SELECTED_USER';
+const selectedUserAction = attendee => ({
+  type: SELECTED_USER,
+  attendee,
+});
+
+export const selectUser = attendee => dispatch => {
+  dispatch(selectedUserAction(attendee));
+};
+
+export const FETCHED_ME = 'FETCHED_ME';
+const fetchedMeAction = me => ({
+  type: FETCHED_ME,
+  me,
+});
+
+export const fetchedMe = me => dispatch => {
+  dispatch(fetchedMeAction(me));
+};
+
 /*************************************************************************/
 /* handlers for stomp messages */
 export const ALL_ROOMS_FETCHED = 'ALL_ROOMS_FETCHED';

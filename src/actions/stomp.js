@@ -1,6 +1,8 @@
 import { Client } from '@stomp/stompjs';
 // import { chatService } from '../services/ChatService';
 
+import { fetchedMe } from './chat';
+
 export const STOMP_CLIENT_CONNECTED = 'STOMP_CLIENT_CONNECTED';
 const stompClientConnectedAction = stompClient => ({
   type: STOMP_CLIENT_CONNECTED,
@@ -10,6 +12,7 @@ export const STOMP_CLIENT_CONNECT_FAILED = 'STOMP_CLIENT_CONNECT_FAILED';
 const stompClientConnectFailedAction = {
   type: STOMP_CLIENT_CONNECT_FAILED,
 };
+
 export const connectWS = (accessToken, displayName) => dispatch => {
   const stompClient = new Client({
     brokerURL: 'ws://devserver.my:8080/wsdemo',
@@ -26,6 +29,7 @@ export const connectWS = (accessToken, displayName) => dispatch => {
   });
   stompClient.onConnect = frame => {
     console.log(frame);
+    dispatch(fetchedMe(frame.headers['user-name']));
     dispatch(stompClientConnectedAction(stompClient));
   };
   stompClient.onDisconnect = frame => {

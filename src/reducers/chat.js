@@ -1,19 +1,23 @@
 import {
   ALL_ROOMS_FETCHED,
+  EXITED_ROOM,
+  FETCHED_ME,
   ROOM_DETAILS_FETCHED,
   ROOM_CREATED,
+  SELECTED_USER,
   TOPIC_SUBSCRIBED,
   TOPIC_UNSUBSCRIBED,
   USER_ENTERED,
-  EXITED_ROOM,
   USER_EXITED,
 } from '../actions/chat';
 
 import { STOMP_CLIENT_WILL_DISCONNECT } from '../actions/stomp';
 
 const initState = {
-  rooms: [],
   currentRoom: null,
+  me: null,
+  rooms: [],
+  speakingTo: null,
   topics: [],
 };
 
@@ -21,6 +25,20 @@ export const chatReducer = (state = initState, action) => {
   const { type } = action;
 
   if (type === STOMP_CLIENT_WILL_DISCONNECT) return initState;
+
+  if (type === SELECTED_USER) {
+    return {
+      ...state,
+      speakingTo: action.attendee,
+    };
+  }
+
+  if (type === FETCHED_ME) {
+    return {
+      ...state,
+      me: action.me,
+    };
+  }
 
   if (type === TOPIC_SUBSCRIBED) {
     if (action.topic.uri.startsWith('/app')) return state;
@@ -65,13 +83,6 @@ export const chatReducer = (state = initState, action) => {
       rooms,
     };
   }
-
-  // if (type === ENTERED_ROOM) {
-  //   return {
-  //     ...state,
-  //     myRoomId: action.room.id,
-  //   };
-  // }
 
   if (type === EXITED_ROOM) {
     return {

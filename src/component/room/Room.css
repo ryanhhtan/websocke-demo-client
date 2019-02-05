@@ -1,4 +1,15 @@
-.user-pane {
+.room-pane {
+  width: 100%;
   display: flex;
+}
+.user-pane {
+  width: 25%;
+  height: 600px;
+  overflow-y: auto;
   flex-wrap: wrap;
+}
+.message-pane {
+  width: 75%;
+  height: 600px;
+  overflow-y: auto;
 }
