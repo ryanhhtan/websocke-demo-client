@@ -26,7 +26,7 @@ class Room extends Component {
           <div className="user-pane">
             {attendees.length > 0 &&
               attendees.map(attendee => (
-                <User user={attendee.user} key={attendee.sessionId} />
+                <User user={attendee} key={attendee.sessionId} />
               ))}
           </div>
           <div className="message-pane">
