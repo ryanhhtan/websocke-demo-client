@@ -28,7 +28,8 @@ const toPublishAction = (destination, content = {}) => ({
     body: JSON.stringify(content),
   },
 });
-export const publish = data => dispatch => dispatch(toPublishAction(data));
+export const publish = (destination, content) => dispatch =>
+  dispatch(toPublishAction(destination, content));
 
 export const TOPIC_SUBSCRIBED = 'TOPIC_SUBSCRIBED';
 export const topicSubscribedAction = topic => ({
@@ -139,15 +140,13 @@ const userExitRoomAction = attendee => ({
 const handleUserExited = event =>
   userExitRoomAction(event.roomId, event.attendee);
 
-export const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
-const chatMessageReceivedAction = message => ({
-  type: CHAT_MESSAGE_RECEIVED,
+export const CHAT_MESSAGE = 'CHAT_MESSAGE';
+const chatMessageAction = message => ({
+  type: CHAT_MESSAGE,
   message,
 });
-export const handleChatMessage = (dispatch, data) => {
-  const message = JSON.parse(data.body);
-  console.log(message);
-  dispatch(chatMessageReceivedAction(message));
+export const handleChatMessage = event => dispatch => {
+  dispatch(chatMessageAction(event.message));
 };
 
 export const USER_CONNECTED = 'USER_CONNECTED';
@@ -162,6 +161,7 @@ const handleUserConnected = event => dispatch => {
  */
 const chatEventHandler = {
   ALL_ROOMS_FETCHED: handleAllRoomsFetched,
+  CHAT_MESSAGE: handleChatMessage,
   ROOM_CREATED: handleRoomCreated,
   ROOM_DETAILS_FETCHED: handleRoomDetailsFetched,
   USER_ENTERED: handleUserEntered,

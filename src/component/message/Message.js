@@ -1,16 +1,23 @@
 import React, { Component } from 'react';
 import './Message.css';
+import { connect } from 'react-redux';
 
 class Message extends Component {
   render() {
-    const { message, extraClass } = this.props;
+    const { message, me } = this.props;
+    const extraClass = message.from.user.id === me ? ' self' : ' peer';
     return (
-      <div className={extraClass + ' message'}>
-        <h3>{message.speaker.displayName}</h3>
+      <div className={'message' + extraClass}>
+        <span>{message.from.displayName} says </span>
+        <span>{message.timeStamp}</span>
         <p>{message.content}</p>
       </div>
     );
   }
 }
 
-export default Message;
+const mapStateToProps = state => ({
+  me: state.chatReducer.me,
+});
+
+export default connect(mapStateToProps)(Message);

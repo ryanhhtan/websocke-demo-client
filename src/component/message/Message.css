@@ -1,0 +1,15 @@
+.message {
+  width: 75%;
+  margin-bottom: 1px;
+}
+
+.self {
+  background: #f2ffe6;
+  float: left;
+}
+
+.peer {
+  background: #fff2e6;
+  float: right;
+  text-align: right;
+}

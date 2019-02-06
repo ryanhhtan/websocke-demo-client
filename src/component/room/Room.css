@@ -11,5 +11,29 @@
 .message-pane {
   width: 75%;
   height: 600px;
+  padding-left: 20px;
+}
+
+.user-public {
+  width: 100%;
+  height: 50px;
+  background: #c2f0c2;
+  margin-bottom: 1px;
+}
+
+.room-caption {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.centered {
+  text-align: center;
+}
+.message-display {
+  height: 550px;
   overflow-y: auto;
+}
+
+.message-input {
+  width: 90%;
 }

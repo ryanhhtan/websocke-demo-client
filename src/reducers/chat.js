@@ -1,5 +1,6 @@
 import {
   ALL_ROOMS_FETCHED,
+  CHAT_MESSAGE,
   EXITED_ROOM,
   FETCHED_ME,
   ROOM_DETAILS_FETCHED,
@@ -19,12 +20,40 @@ const initState = {
   rooms: [],
   speakingTo: null,
   topics: [],
+  userMessages: {},
+  roomMessages: {},
 };
 
 export const chatReducer = (state = initState, action) => {
   const { type } = action;
 
   if (type === STOMP_CLIENT_WILL_DISCONNECT) return initState;
+
+  if (type === CHAT_MESSAGE) {
+    const { to, from } = action.message;
+    if (typeof to === 'object' && to !== null) {
+      const userMessages = Object.assign({}, state.userMessages);
+      const key = to.user.id === state.me ? from.user.id : to.user.id;
+      if (typeof userMessages[key] === 'undefined') {
+        userMessages[key] = [];
+      }
+      userMessages[key].push(action.message);
+      return {
+        ...state,
+        userMessages,
+      };
+    }
+    const roomMessages = Object.assign({}, state.roomMessages);
+    const key = state.currentRoom.id;
+    if (typeof roomMessages[key] === 'undefined') {
+      roomMessages[key] = [];
+    }
+    roomMessages[key].push(action.message);
+    return {
+      ...state,
+      roomMessages,
+    };
+  }
 
   if (type === SELECTED_USER) {
     return {
