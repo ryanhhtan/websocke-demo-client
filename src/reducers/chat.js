@@ -22,6 +22,7 @@ const initState = {
   topics: [],
   userMessages: {},
   roomMessages: {},
+  newMessageNotifications: {},
 };
 
 export const chatReducer = (state = initState, action) => {
@@ -31,8 +32,17 @@ export const chatReducer = (state = initState, action) => {
 
   if (type === CHAT_MESSAGE) {
     const { to, from } = action.message;
+    const newMessageNotifications = Object.assign(
+      {},
+      state.newMessageNotifications,
+    );
     if (typeof to === 'object' && to !== null) {
       const userMessages = Object.assign({}, state.userMessages);
+      if (
+        state.speakingTo === null ||
+        (from.user.id !== state.me && from.user.id !== state.speakingTo.user.id)
+      )
+        newMessageNotifications[from.user.id] = true;
       const key = to.user.id === state.me ? from.user.id : to.user.id;
       if (typeof userMessages[key] === 'undefined') {
         userMessages[key] = [];
@@ -41,6 +51,7 @@ export const chatReducer = (state = initState, action) => {
       return {
         ...state,
         userMessages,
+        newMessageNotifications,
       };
     }
     const roomMessages = Object.assign({}, state.roomMessages);
@@ -48,17 +59,24 @@ export const chatReducer = (state = initState, action) => {
     if (typeof roomMessages[key] === 'undefined') {
       roomMessages[key] = [];
     }
+    if (state.speakingTo !== null) newMessageNotifications.public = true;
     roomMessages[key].push(action.message);
     return {
       ...state,
+      newMessageNotifications,
       roomMessages,
     };
   }
 
   if (type === SELECTED_USER) {
+    const userId =
+      action.attendee === null ? 'public' : action.attendee.user.id;
+    const newMessageNotifications = state.newMessageNotifications;
+    delete newMessageNotifications[userId];
     return {
       ...state,
       speakingTo: action.attendee,
+      newMessageNotifications,
     };
   }
 

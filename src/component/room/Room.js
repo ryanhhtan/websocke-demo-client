@@ -50,6 +50,11 @@ class Room extends Component {
     this.setState({ message: '' });
   };
 
+  hasNotification = () => {
+    const { newMessageNotifications } = this.props;
+    return newMessageNotifications.public;
+  };
+
   render() {
     const { room, me, speakingTo, roomMessages, userMessages } = this.props;
     const messages =
@@ -68,6 +73,7 @@ class Room extends Component {
             <h4 className="centered">Users</h4>
             <div className="user-public" onClick={this.unselectUser}>
               <span>public</span>
+              {this.hasNotification() && <span className="alert-new-message" />}
             </div>
             {attendees.length > 0 &&
               attendees
@@ -110,6 +116,7 @@ class Room extends Component {
 
 const mapStateToProps = state => ({
   me: state.chatReducer.me,
+  newMessageNotifications: state.chatReducer.newMessageNotifications,
   speakingTo: state.chatReducer.speakingTo,
   room: state.chatReducer.currentRoom,
   roomMessages: state.chatReducer.roomMessages,

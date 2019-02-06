@@ -7,3 +7,10 @@
 .selected {
   background: #6666ff;
 }
+.alert-new-message {
+  width: 10px;
+  height: 10px;
+  background: #ff0000;
+  border-radius: 50%;
+  float: right;
+}
