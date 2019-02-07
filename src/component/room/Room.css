@@ -1,17 +1,25 @@
+.room {
+  height: 100%;
+}
+
+.room-control {
+    height: 5%;
+}
+
 .room-pane {
   width: 100%;
   display: flex;
 }
 .user-pane {
   width: 25%;
-  height: 600px;
+  height: 100%;
   overflow-y: auto;
   flex-wrap: wrap;
 }
 .message-pane {
   width: 75%;
-  height: 600px;
-  padding-left: 20px;
+  height: 100%;
+  /* padding-left: 20px; */
 }
 
 .user-public {
@@ -30,7 +38,7 @@
   text-align: center;
 }
 .message-display {
-  height: 550px;
+  height: 90%;
   overflow-y: auto;
 }
 

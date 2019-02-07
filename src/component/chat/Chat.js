@@ -10,7 +10,9 @@ class Chat extends Component {
     const { isConnected } = this.props;
     return (
       <div className="chat">
-        <h1>Websocket Chat Demo</h1>
+        <div className="caption-1">
+          <h1>Websocket Chat Demo</h1>
+        </div>
         <div className="identity-area">
           <div className="entrance-pane">
             <Entrance />
@@ -19,7 +21,11 @@ class Chat extends Component {
             <Login />
           </div>
         </div>
-        {isConnected && <ChatPane />}
+        {isConnected && (
+          <div className="chat-pane">
+            <ChatPane />
+          </div>
+        )}
       </div>
     );
   }
