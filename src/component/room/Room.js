@@ -85,27 +85,35 @@ class Room extends Component {
           <div className="message-pane">
             <h4 className="centered">messages</h4>
             <div className="message-display">
-              {messages && messages.length > 0 ? (
-                messages.map(m => <Message message={m} key={m.timeStamp} />)
-              ) : (
-                <span>No messages for now.</span>
-              )}
+              {messages &&
+                messages.length > 0 &&
+                messages.map(m => <Message message={m} key={m.timeStamp} />)}
             </div>
             <div className="message-enter">
-              <span>Speaking to: </span>
-              <span>
-                {speakingTo === null ? 'public' : speakingTo.displayName}
-              </span>
-              <br />
-              <input
-                className="message-input"
-                name="message"
-                value={this.state.message}
-                type="text"
-                onChange={this.editText}
-                placeholder="Input message"
-              />
-              <button onClick={this.sendMessage}>Send</button>
+              <div>
+                <span>Speaking to: </span>
+                <span>
+                  {speakingTo === null ? 'public' : speakingTo.displayName}
+                </span>
+              </div>
+              <div>
+                <input
+                  className="message-input"
+                  name="message"
+                  value={this.state.message}
+                  type="text"
+                  onChange={this.editText}
+                  placeholder="Input message"
+                />
+              </div>
+              <div>
+                <button
+                  onClick={this.sendMessage}
+                  disabled={this.state.message === ''}>
+                  Send
+                </button>
+                <button>Video Call</button>
+              </div>
             </div>
           </div>
         </div>

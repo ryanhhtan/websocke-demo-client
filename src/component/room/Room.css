@@ -3,7 +3,7 @@
 }
 
 .room-control {
-    height: 5%;
+  height: 5%;
 }
 
 .room-pane {
@@ -38,7 +38,7 @@
   text-align: center;
 }
 .message-display {
-  height: 90%;
+  height: 70%;
   overflow-y: auto;
 }
 
