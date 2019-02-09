@@ -11,7 +11,7 @@ class Chat extends Component {
     return (
       <div className="chat">
         <div className="caption-1">
-          <h1>Websocket Chat Demo</h1>
+          <span>Websocket Chat Demo</span>
         </div>
         <div className="identity-area">
           <div className="entrance-pane">

@@ -1,0 +1,11 @@
+.local-video {
+  width: 320px;
+  height: 240px;
+  background: black;
+}
+.remote-video {
+  width: 640px;
+  height: 480px;
+  background: black;
+  margin-bottom: 5px;
+}

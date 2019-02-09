@@ -8,14 +8,12 @@ import {
   publish,
 } from '../../actions/chat';
 import User from '../user/User';
-import Message from '../message/Message';
+import PaneTab from '../wigets/PaneTab';
+import MessageTab from '../tab/MessageTab';
+import VideoTab from '../tab/VideoTab';
 import './Room.css';
 
 class Room extends Component {
-  state = {
-    message: '',
-  };
-
   exitRoom = () => {
     const { exitRoom, room } = this.props;
     exitRoom(room);
@@ -32,35 +30,13 @@ class Room extends Component {
     selectUser(null);
   };
 
-  editText = event => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  sendMessage = event => {
-    const { publish, speakingTo, room } = this.props;
-    const { message } = this.state;
-
-    if (speakingTo === null) {
-      publish(`/app/room.${room.id}.message`, { message });
-    } else {
-      publish(`/app/user.${speakingTo.sessionId}.message`, { message });
-    }
-    this.setState({ message: '' });
-  };
-
   hasNotification = () => {
     const { newMessageNotifications } = this.props;
     return newMessageNotifications.public;
   };
 
   render() {
-    const { room, me, speakingTo, roomMessages, userMessages } = this.props;
-    const messages =
-      speakingTo === null
-        ? roomMessages[room.id]
-        : userMessages[speakingTo.user.id];
+    const { room, me } = this.props;
     const attendees = room.attendees;
     return (
       <div className="room">
@@ -82,39 +58,14 @@ class Room extends Component {
                   <User attendee={attendee} key={attendee.user.id} />
                 ))}
           </div>
+
           <div className="message-pane">
-            <h4 className="centered">messages</h4>
-            <div className="message-display">
-              {messages &&
-                messages.length > 0 &&
-                messages.map(m => <Message message={m} key={m.timeStamp} />)}
+            <div className="tab-control">
+              <PaneTab pane="message" />
+              <PaneTab pane="video" />
             </div>
-            <div className="message-enter">
-              <div>
-                <span>Speaking to: </span>
-                <span>
-                  {speakingTo === null ? 'public' : speakingTo.displayName}
-                </span>
-              </div>
-              <div>
-                <input
-                  className="message-input"
-                  name="message"
-                  value={this.state.message}
-                  type="text"
-                  onChange={this.editText}
-                  placeholder="Input message"
-                />
-              </div>
-              <div>
-                <button
-                  onClick={this.sendMessage}
-                  disabled={this.state.message === ''}>
-                  Send
-                </button>
-                <button>Video Call</button>
-              </div>
-            </div>
+            {this.props.activePane === 'message' && <MessageTab />}
+            {this.props.activePane === 'video' && <VideoTab />}
           </div>
         </div>
       </div>
@@ -125,10 +76,11 @@ class Room extends Component {
 const mapStateToProps = state => ({
   me: state.chatReducer.me,
   newMessageNotifications: state.chatReducer.newMessageNotifications,
+  activePane: state.chatReducer.activePane,
   speakingTo: state.chatReducer.speakingTo,
   room: state.chatReducer.currentRoom,
-  roomMessages: state.chatReducer.roomMessages,
-  userMessages: state.chatReducer.userMessages,
+  // roomMessages: state.chatReducer.roomMessages,
+  // userMessages: state.chatReducer.userMessages,
   stompClient: state.stompReducer.stompClient,
 });
 

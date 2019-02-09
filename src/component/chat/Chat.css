@@ -17,6 +17,8 @@
 }
 .caption-1 {
   height: 5%;
+  font-size: 3em;
+  font-weight: bold;
 }
 
 .chat-pane {

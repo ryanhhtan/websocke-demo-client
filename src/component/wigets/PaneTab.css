@@ -1,0 +1,8 @@
+.tabs {
+  width: 80px;
+  background: #eeeeee;
+}
+
+.active-tab {
+  background: #ff9900;
+}

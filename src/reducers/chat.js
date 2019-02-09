@@ -1,4 +1,5 @@
 import {
+  ACTIVE_PANE,
   ALL_ROOMS_FETCHED,
   CHAT_MESSAGE,
   EXITED_ROOM,
@@ -10,6 +11,7 @@ import {
   TOPIC_UNSUBSCRIBED,
   USER_ENTERED,
   USER_EXITED,
+  CONNECTED_LOCAL_MEDIA,
 } from '../actions/chat';
 
 import { STOMP_CLIENT_WILL_DISCONNECT } from '../actions/stomp';
@@ -23,6 +25,10 @@ const initState = {
   userMessages: {},
   roomMessages: {},
   newMessageNotifications: {},
+  activePane: 'message',
+  localMedia: null,
+  remoteMedia: null,
+  peerConnection: null,
 };
 
 export const chatReducer = (state = initState, action) => {
@@ -32,12 +38,9 @@ export const chatReducer = (state = initState, action) => {
 
   if (type === CHAT_MESSAGE) {
     const { to, from } = action.message;
-    const newMessageNotifications = Object.assign(
-      {},
-      state.newMessageNotifications,
-    );
+    const newMessageNotifications = { ...state.newMessageNotifications };
     if (typeof to === 'object' && to !== null) {
-      const userMessages = Object.assign({}, state.userMessages);
+      const userMessages = { ...state.userMessages };
       if (
         state.speakingTo === null ||
         (from.user.id !== state.me && from.user.id !== state.speakingTo.user.id)
@@ -54,7 +57,7 @@ export const chatReducer = (state = initState, action) => {
         newMessageNotifications,
       };
     }
-    const roomMessages = Object.assign({}, state.roomMessages);
+    const roomMessages = { ...state.roomMessages };
     const key = state.currentRoom.id;
     if (typeof roomMessages[key] === 'undefined') {
       roomMessages[key] = [];
@@ -89,8 +92,9 @@ export const chatReducer = (state = initState, action) => {
 
   if (type === TOPIC_SUBSCRIBED) {
     if (action.topic.uri.startsWith('/app')) return state;
-    const topics = state.topics.slice();
-    topics.push(action.topic);
+    // const topics = state.topics.slice();
+    // topics.push(action.topic);
+    const topics = [...state.topics, action.topic];
     return {
       ...state,
       topics,
@@ -99,7 +103,7 @@ export const chatReducer = (state = initState, action) => {
 
   if (type === TOPIC_UNSUBSCRIBED) {
     if (action.topic.uri.startsWith('/app')) return state;
-    const topics = state.topics.slice();
+    const topics = [...state.topics];
     const index = topics.indexOf(action.topic);
     if (index >= 0) topics.splice(index, 1);
     return {
@@ -123,11 +127,11 @@ export const chatReducer = (state = initState, action) => {
   }
 
   if (type === ROOM_CREATED) {
-    const rooms = state.rooms.slice();
-    rooms.push(action.room);
+    // const rooms = state.rooms.slice();
+    // rooms.push(action.room);
     return {
       ...state,
-      rooms,
+      rooms: [...state.rooms, action.room],
     };
   }
 
@@ -140,7 +144,7 @@ export const chatReducer = (state = initState, action) => {
 
   if (type === USER_ENTERED) {
     if (state.currentRoom === null) return state;
-    const currentRoom = Object.assign({}, state.currentRoom);
+    const currentRoom = { ...state.currentRoom };
     currentRoom.attendees.push(action.attendee);
     return {
       ...state,
@@ -150,7 +154,7 @@ export const chatReducer = (state = initState, action) => {
 
   if (type === USER_EXITED) {
     if (state.currentRoom == null) return state;
-    const currentRoom = Object.assign({}, state.currentRoom);
+    const currentRoom = { ...state.currentRoom };
     const attendees = currentRoom.attendees;
     const index = attendees.indexOf(action.attendee);
     currentRoom.attendees = attendees.splice(index, 1);
@@ -159,5 +163,22 @@ export const chatReducer = (state = initState, action) => {
       currentRoom,
     };
   }
+
+  if (type === ACTIVE_PANE) {
+    return {
+      ...state,
+      activePane: action.pane,
+    };
+  }
+
+  if (type === CONNECTED_LOCAL_MEDIA) {
+    return {
+      ...state,
+      localMedia: action.media,
+    };
+  }
+
+  // Add more cases before the next line
+
   return state;
 };

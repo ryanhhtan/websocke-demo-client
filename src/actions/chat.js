@@ -99,6 +99,26 @@ export const fetchedMe = me => dispatch => {
   dispatch(fetchedMeAction(me));
 };
 
+export const ACTIVE_PANE = 'ACTIVE_PANE ';
+const activatePaneAction = pane => ({
+  type: ACTIVE_PANE,
+  pane,
+});
+export const activatePane = pane => dispatch =>
+  dispatch(activatePaneAction(pane));
+
+export const CONNECTED_LOCAL_MEDIA = 'CONNECTED_LOCAL_MEDIA';
+const connectedLocalMedia = media => ({
+  type: CONNECTED_LOCAL_MEDIA,
+  media,
+});
+
+export const videoCall = () => async dispatch => {
+  const constrains = { video: true };
+  const localMedia = await navigator.mediaDevices.getUserMedia(constrains);
+  dispatch(connectedLocalMedia(localMedia));
+};
+
 /*************************************************************************/
 /* handlers for stomp messages */
 export const ALL_ROOMS_FETCHED = 'ALL_ROOMS_FETCHED';
@@ -155,6 +175,11 @@ const handleUserConnected = event => dispatch => {
   // console.log(event);
 };
 
+export const WEBRTC_SIGNALING = 'WEBRTC_SIGNALING';
+const handleWebrtcSginal = event => {
+  console.log(event.signal);
+};
+
 /**
  * map event handler to type.
  * !!! BESURE THE ACTUAL HANDLERS ARE DEFINED BEFORE THIS MAP.
@@ -167,6 +192,7 @@ const chatEventHandler = {
   USER_ENTERED: handleUserEntered,
   USER_EXITED: handleUserExited,
   USER_CONNECTED: handleUserConnected,
+  WEBRTC_SIGNALE: handleWebrtcSginal,
 };
 
 export const handleChatEvent = (dispatch, data) => {

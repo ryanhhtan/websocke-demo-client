@@ -1,0 +1,9 @@
+.message-display {
+  height: 80%;
+  overflow-y: auto;
+}
+
+.message-input {
+  height: 20%;
+  width: 95%;
+}
