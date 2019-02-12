@@ -1,18 +1,12 @@
 import React, { Component } from 'react';
 import Message from '../message/Message';
-import { publish, activatePane, videoCall } from '../../actions/chat';
+import { publish, activatePane } from '../../actions/chat';
 import { connect } from 'react-redux';
 import './MessageTab.css';
 
 class MessageTab extends Component {
   state = {
     message: '',
-  };
-
-  videoCall = () => {
-    console.log('video call');
-    this.props.activatePane('video');
-    this.props.videoCall();
   };
 
   editText = event => {
@@ -76,9 +70,6 @@ class MessageTab extends Component {
               disabled={this.state.message === ''}>
               Send
             </button>
-            {this.props.speakingTo !== null && (
-              <button onClick={this.videoCall}>Video Call</button>
-            )}
           </div>
         </div>
       </div>
@@ -96,7 +87,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  videoCall: () => dispatch(videoCall()),
   publish: (destination, content) => dispatch(publish(destination, content)),
   activatePane: pane => dispatch(activatePane(pane)),
 });

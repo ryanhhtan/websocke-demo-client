@@ -155,9 +155,12 @@ export const chatReducer = (state = initState, action) => {
   if (type === USER_EXITED) {
     if (state.currentRoom == null) return state;
     const currentRoom = { ...state.currentRoom };
-    const attendees = currentRoom.attendees;
-    const index = attendees.indexOf(action.attendee);
-    currentRoom.attendees = attendees.splice(index, 1);
+    currentRoom.attendees = [
+      ...currentRoom.attendees.filter(
+        a => a.user.id !== action.attendee.user.id,
+      ),
+    ];
+
     return {
       ...state,
       currentRoom,
@@ -174,7 +177,7 @@ export const chatReducer = (state = initState, action) => {
   if (type === CONNECTED_LOCAL_MEDIA) {
     return {
       ...state,
-      localMedia: action.media,
+      localMedia: action.localMedia,
     };
   }
 

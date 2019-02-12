@@ -1,5 +1,5 @@
 // const authUrl = 'https://auth.lasfu.roro3.com/login';
-const authUrl = 'http://devserver.my:4444/login';
+const authUrl = 'https://auth.devserver.my/login';
 const ACCESSTOKEN = 'accessToken';
 
 export const fetchToken = async (email, password) => {

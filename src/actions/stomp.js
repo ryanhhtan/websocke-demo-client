@@ -15,7 +15,7 @@ const stompClientConnectFailedAction = {
 
 export const connectWS = (accessToken, displayName) => dispatch => {
   const stompClient = new Client({
-    brokerURL: 'ws://devserver.my:8080/wsdemo',
+    brokerURL: 'wss://dev.devserver.my/wsdemo',
     connectHeaders: {
       displayName,
       accessToken,

@@ -108,16 +108,15 @@ export const activatePane = pane => dispatch =>
   dispatch(activatePaneAction(pane));
 
 export const CONNECTED_LOCAL_MEDIA = 'CONNECTED_LOCAL_MEDIA';
-const connectedLocalMedia = media => ({
+const connectedLocalMediaAction = localMedia => ({
   type: CONNECTED_LOCAL_MEDIA,
-  media,
+  localMedia,
 });
 
-export const videoCall = () => async dispatch => {
-  const constrains = { video: true };
-  const localMedia = await navigator.mediaDevices.getUserMedia(constrains);
-  dispatch(connectedLocalMedia(localMedia));
-};
+export const connectedLocalMedia = localMedia => dispatch =>
+  dispatch(connectedLocalMediaAction(localMedia));
+
+export const videoCall = () => dispatch => {};
 
 /*************************************************************************/
 /* handlers for stomp messages */
@@ -157,8 +156,8 @@ const userExitRoomAction = attendee => ({
   type: USER_EXITED,
   attendee,
 });
-const handleUserExited = event =>
-  userExitRoomAction(event.roomId, event.attendee);
+const handleUserExited = event => dispatch =>
+  dispatch(userExitRoomAction(event.attendee));
 
 export const CHAT_MESSAGE = 'CHAT_MESSAGE';
 const chatMessageAction = message => ({
